@@ -1,0 +1,392 @@
+\documentclass[11pt]{amsart}
+\usepackage{amsmath, amssymb, amsthm, mathtools,bbm}
+\usepackage[margin=1in]{geometry}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{hypothesis}[theorem]{Hypothesis}
+
+\def\Imag{\mathrm{Im}}
+\def\Div{\mathrm{Div}^{*}}
+\def\w{w}
+\def\Z{\mathbb{Z}}
+\def\N{\mathbb{N}}
+\def\Q{\mathcal{Q}}
+\def\B{\mathcal{B}}
+\def\D{\mathcal{D}}
+\def\L{\mathcal{L}}
+\def\fin{\mathrm{fin}}
+
+\def\BDP{B_{j-1}\cdot \Div(M_j)}
+
+\begin{document}
+
+\author{Daniel Larsen}
+\title{Sufficiently abundant numbers are pseudoperfect}
+\email{dlarsen@mit.edu}
+
+\begin{abstract}
+There exists an absolute constant $C$ such that if $n$ is any positive integer with $\sigma(n)\ge Cn$, then $n$ is a sum of distinct proper divisors.
+This answers a question of Benkoski and Erd\H{o}s.
+\end{abstract}
+
+\maketitle
+
+Following Sierpi\'nski \cite{S65}, we say a number $n$ is \emph{pseudoperfect} if it can be written as a sum of distinct proper divisors of $n$. 
+We call  $\sigma(n)/n$, where $\sigma(n)$ is the sum of the divisors of $n$, the \emph{abundance index} of $n$.
+Benkoski and Erd\H{o}s conjectured \cite{BE74} that if the abundance index of $n$ is sufficiently large, then $n$ must be pseudoperfect.
+In this paper, we prove this conjecture.
+
+Following a general strategy suggested by Tao and Bloom \cite{B825}, as exemplified in work of Croot \cite{C03}, Bloom \cite{B23}, and Conlon et al. \cite{C25},
+we use a probabilistic method to show that a suitably weighted random selection process of proper divisors of $n$ produces $n$ as a sum with positive
+probability. The main technical difficulty stems from the possibility that the prime factors of $n$ may accumulate on very different scales.
+We use a greedy-but-not-too-greedy algorithm to approach $n$ from below closely enough that the divisors on one scale are suitable for ``terminal guidance.''
+
+Following Friedman \cite{F93}, we find it convenient to recast the problem in terms of Egyptian fractions, representing $1$ as a sum of reciprocals of divisors of $n$.
+Schematically, our approach can be decomposed into stages as follows:
+\begin{enumerate}
+\item[1.] We divide prime factors of $n$ into dyadic intervals, discarding intervals whose prime density is too low.
+\vskip 5pt
+\item[2.] We block the dyadic intervals into ranges of intervals such that there are no very large gaps within any block.
+\vskip 5pt
+\item[3.] We use a greedy algorithm to identify the first block on which the sum of reciprocals reaches $1$ with sufficient slack.
+\vskip 5pt
+\item[4.] We then pull back, if necessary, so that the next block of reciprocals add up to (ideally) twice the distance from the current sum to $1$.
+\vskip 5pt
+\item[5.] Finally, we use a circle method argument to show that the next block of reciprocals can precisely fill the gap. 
+\end{enumerate}
+
+The letter $p$ will always refer to a prime. We say $n$ is \emph{$N$-smooth} if all its prime factors are $\le N$ and \emph{$N$-rough} if all its prime factors
+are $\ge N$.
+We say something is true for almost all elements of a set $S$ if the number of exceptions has size $o(|S|)$. Finally, we write $A \cdot B = \{ab : a \in A, b \in B\}$.
+
+We use standard asymptotic notation with the additions $x\sim y$, which means $x\in [y,2y)$,  and the equivalent statements $x \lesssim_\alpha y$ and $y \gtrsim_\alpha x$, which, for a parameter $\alpha > 1$ 
+that will be specified prior to this usage, mean there exists an absolute constant $C$ such that $x <  \alpha^C \cdot y$.
+
+We now state the main theorem.
+
+\begin{theorem}
+\label{main}
+For every $\varepsilon > 0$ there exists an integer $L$ such that if $n$ is an integer with 
+$$\sigma(n)/n > 2 + \varepsilon$$
+and it has no prime factors less than $L$, then $n$ is pseudoperfect.
+\end{theorem}
+
+Because any positive integer multiple of a pseudoperfect number is pseudoperfect,
+we may assume that $\sigma(n)/n = O(1)$.
+We may also assume that $n$ is squarefree since if $\sigma(n)/n>2+\varepsilon$, the squarefree part of $n$ also has abundance index bounded away from $2$ if 
+$$\sum_{p\ge L} \frac 1{p^2} = o(\varepsilon).$$
+(We will assume that $L$ is sufficiently large in terms of $\varepsilon$ that all such claims are true.) We will also assume $\varepsilon$ is small, specifically that
+$\varepsilon < 1$ and that 
+\begin{equation}
+\label{weird}
+\left(1+\frac\varepsilon 8\right)\left(1-\frac\varepsilon{10}\left(1+\frac\varepsilon 8\right)\right)> 1 + \frac\varepsilon{100}.
+\end{equation}
+
+Define 
+$$\w(A) = \sum_{1<a \in A} \frac{1}{a},$$
+$\mathrm{Div}(N)$ to be the set of divisors of $N$, and $\Div(N)$ the set of divisors greater than $1$.  For $N$ squarefree and $L$-rough,
+\begin{equation}
+\label{L-rough}
+\log (1+\w(\Div(N))) = \sum_{p|N} \log \frac{p+1}p = \sum_{p|N} \frac 1p + O\Bigl(\frac{1}{L}\Bigr).
+\end{equation}
+Let $x_1, \ldots, x_K$ be a maximal subsequence of the powers of $2$ such that $x_{i+1} \ge 2x_i$, and 
+$$|P_i| > x_i/(\log x_i)^2$$ 
+where
+$$P_i = \{p \sim x_i : p \mid n\}.$$
+Note that this sequence is non-empty since 
+\begin{equation}\label{eq:contradiction}
+\sum_{\substack{p \mid n \\ \nexists\, i : p \sim x_i}} \frac{1}{p} \ll \sum_{j \ge \lfloor \log L\rfloor} \frac{1}{j^2} \ll \frac{1}{\log L},
+\end{equation}
+which implies by \eqref{L-rough} that 
+\begin{equation}
+\label{unchanged}
+\sum_{\substack{1<d\vert n\\ \exists p\not\in P: p\vert d}} \frac 1d \le
+\frac{\sigma(n)}n \sum_{\substack{1<d\vert n\\ \forall p\vert d, \,p\not\in P}} \frac 1d \ll  
+\frac 1{\log L} = o(\varepsilon),
+\end{equation}
+setting $P$ to be the union of the $P_i$.
+
+Let $N_i = \prod_{p \in P_i} p$ and $J_i = [x_i^{8}, e^{x_i/\log^2 x_i}]$. Define an equivalence relation on $\{1, \ldots, K\}$ taking the transitive closure of the relation which identifies $i$ and $j$ when $J_i \cap J_j \neq \emptyset$. Note that when $J_i\cap J_j=\emptyset$ with $j>i$, we have $x_i\ll \log^{1+\varepsilon} x_j$.
+There exist $a_1, \ldots, a_{r}$ with $a_1 = 1$ and $a_r = K + 1$ giving equivalence classes $S_j = [a_j, a_{j+1})$. 
+
+Let $M_j = \prod_{i \in S_j} N_i$ and 
+$$M_{j, \le i^*} = \prod_{\substack{i \in S_j \\ i \leq i^*}} N_i.$$
+Let $B_j =  \mathrm{Div}(M_{\le j})$ where $M_{\le j} = \prod_{j'\le j} M_{j'}$. Note that the sets $B_{j-1}\cdot \Div(M_j)$ for $1\le j<r$ partition $\Div(M_{r-1})$.
+By \eqref{unchanged},
+\begin{equation}
+\label{R of D}
+\w(\Div(M_{\le r-1})) > 1+\frac\varepsilon2.
+\end{equation}
+Different values of $j$ correspond to exponentially separated scales on which $n$ has many prime factors. We want to apply the circle method to the divisors of $n$, but these vastly different scales will not combine well. Therefore we begin with a greedy process.
+
+We initialize $A_0 = \{1\}$. Beginning with $j = 1$ we form $A_j$ according to the following rules. 
+If 
+$$\w(B_{j-1} \cdot \Div(M_j)) \ge \Bigl(1 + \frac{\varepsilon}{8}\Bigr)(1 - \w(A_{j-1}))$$
+(which we think of as meaning the scales up to $j$ not only reach $1$ but do so decisively)
+we set $A = A_{j-1}$, $B = B_{j-1}$, and $j_0 = j$ and stop. On the other hand, if 
+\begin{equation}
+\label{case}
+\w(B_{j-1} \cdot \Div(M_j)) < \Bigl(1 + \frac{\varepsilon}{8}\Bigr)(1 - \w(A_{j-1}))
+\end{equation}
+then we start by partitioning the elements of $B_{j-1}\cdot \Div(M_j)$ into dyadic intervals and letting $E_j$ be obtained by choosing one element 
+from each dyadic interval for which this is possible.
+We then set $A_j = A_{j-1}\cup C_j$, where $C_j$ is a maximal subset of $B_{j-1} \cdot \Div(M_j)$ such that $\w(C_j) < 1 - \w(A_{j-1})$. 
+If $\w(E_j)<1-\w(A_{j-1})$, we choose $C_j$ so that it contains $E_j$.
+In fact, this is always possible since
+$$\w(E_j) \ll \frac 1{x_{a_j}}= o(\w(\BDP)) \ll 1-\w(A_{j-1}),$$
+using \eqref{case}.
+Note that if
+$$\w(A_{j-1}) + \w(B_{j-1}\cdot \Div(M_j)) < 1,$$
+then we take $C_j$ to be all of $B_{j-1}\cdot \Div(M_j)$.
+
+We claim that this process must terminate. The smallest elements of $B_{j-1}\cdot \Div(M_j)$ are all primes between $x_{a_j}$ and $2x_{a_j}$ which divide $n$. Therefore, no summand in 
+$$\sum_{a\in B_{j-1}\cdot \Div(M_j)} \frac 1a$$
+is greater than $\delta$ times the sum for any absolute constant $\delta>0$ when
+$L$ is sufficiently large. 
+When $C_j\neq B_{j-1}\cdot \Div(M_j)$, 
+it follows that
+\begin{equation}
+\label{span}
+\w(C_j)  = (1-o(1))(1-\w(A_{j-1})),
+\end{equation}
+so
+\begin{equation}
+\label{decay}
+1-\w(A_j) = o(1-\w(A_{j-1}))
+\end{equation}
+and
+\begin{equation}
+\label{small}
+\w((B_{j-1}\cdot \Div(M_j))\setminus C_j) \le (1+\frac\varepsilon 8-1+o(1))(1-\w(A_{j-1})) \le \frac\varepsilon 8+ o(1),
+\end{equation}
+subtracting \eqref{span} from \eqref{case}.
+Thus, if the process does not terminate, then $\sum_j \w(C_j) < 1$ so remembering \eqref{R of D},
+\begin{equation}
+\label{untrue}
+ \sum_j \w((B_{j-1}\cdot \Div(M_j))\setminus C_j) = \w(\Div(M_{\le r-1}))-\sum_j \w(C_j) \ge \frac\varepsilon 2.
+ \end{equation}
+
+Label the elements in $\{j: \w(A_{j-1}) + \w(B_{j-1}\cdot \Div(M_j)) \ge 1\}$ as $j_1<j_2<\cdots$. Then
+$$\frac\varepsilon 2\le \sum_k \w((B_{j_k-1}\cdot \Div(M_{j_k}))\setminus C_{j_k}) <  2\w((B_{{j_1}-1}\cdot \Div(M_{j_1}))\setminus C_{j_1}) \le \frac \varepsilon 4+o(1)$$
+by \eqref{untrue}, \eqref{decay}, and \eqref{small} respectively. This gives the desired contradiction.
+
+Thus, we may assume that 
+$$\w(B \cdot \Div(M_{j_0})) \ge (1 + \varepsilon/8)(1 - \w(A)).$$
+We would like to use the circle method to find a subset of the summands of the left hand side which sum to $1-\w(A)$.
+The difficulty is that $1-\w(A)$ may be very small at this point. We happily embraced this possibility before so that we could avoid the situation in which 
+$$\w(A) + \w(B\cdot \Div(M_{j_0})) - 1$$
+was very small. It is time to take a step backward from the greedy method and remove some elements of $A$.
+
+
+Let $i_0$ be the smallest index such that
+\begin{equation}
+\label{index}
+\w(D) \ge \Bigl(1 + \frac{\varepsilon}{8}\Bigr)(1 - \w(A)).
+\end{equation}
+Let $D = B \cdot \Div(M_{j_0,  \le i_0})$.
+Note that $\sum_{p\mid N_{i_0}} 1/p = o(1)$. It follows from this and the fact that 
+$$\w\Bigl(B \cdot \Div(M_{j_0,  \le i_0-1})\Bigr) < \Bigl(1 + \frac{\varepsilon}{8}\Bigr)(1 - \w(A))$$
+that 
+\begin{equation}
+\label{controlled R}
+\w(D) < 2-\w(A).
+\end{equation}
+
+
+\begin{lemma}
+\label{1}
+There exists a subset $D_0$ of $A$ such that setting 
+$$\alpha = \frac{\w(D)}{1 - \w(D_0)},$$
+we have
+$$1 + \frac{\varepsilon}{100} \le \alpha \le \log^{1+\varepsilon} x_{a_{j_0}}.$$
+\end{lemma}
+
+\begin{proof}
+If $w(D)\ge 1+\varepsilon/8$, it is clear by \eqref{controlled R} that we can take $D_0 = A$, and this will result in $\alpha < \frac 2{\varepsilon/8} = 16/\varepsilon$.
+In the other direction, by \eqref{index},
+$\alpha \ge 1+\frac\varepsilon8.$
+This takes care of the $j_0=1$ case.
+
+Now assume $j_0 > 1$. If $\w(D)\ll 1-\w(A)$, then we can take $D_0 = A$ and $1+\frac \varepsilon 8\le \alpha \ll 1$. Otherwise, 
+$$1/\w(D)=o(1/(1-\w(A)))\le M_{\le j_0 - 1}.$$
+Since every prime factor of this product has size at most $2x_{a_{j_0}-1},$
+there exists some $d\in B$ such that $1/\w(D)$ is between $\varepsilon d/(40 x_{a_{j_0} - 1})$ and $\varepsilon d/20$. 
+At the cost of  supposing only that $1/\w(D)$ is between $\varepsilon d/(80 x_{a_{j_0} - 1})$ and $\varepsilon d/10$, we may assume that
+$$d\in \bigcup_{j<j_0} E_j\subset A.$$
+Remove $d$ from $A$ to form $D_0$. Then
+$$1 - \w(D_0) = 1 - \w(A) + \frac{1}{d} > \frac{1}{d} \gg \frac{\w(D)}{x_{a_{j_0} - 1}}.$$
+Rearranging, $\alpha\ll x_{a_{j_0}-1} = o(\log^{1+\varepsilon} x_{a_{j_0}})$
+as claimed. At the same time, we still have 
+$$\alpha \ge  \frac{\w(D)}{1-\w(A)+\varepsilon \w(D)/10}.$$
+Note that if $a/b \ge 1+\varepsilon/8$, then
+$$\frac a{b+\varepsilon a/10} = \frac {a(b-\varepsilon a/10)}{b^2-\varepsilon^2 a^2/100} > \frac ab \bigl(1-\frac {\varepsilon a}{10b}\bigr) \ge 1+\frac\varepsilon{100}$$
+by \eqref{weird}, unless $a/b\ge 5/\varepsilon$, in which case $a/(b+\varepsilon a/10) \ge 10/3$. Plugging in $a=\w(D)$
+and $b=1-\w(A)$, we conclude that $\alpha \ge 1+\frac\varepsilon{100}$.
+
+\end{proof}
+This concludes the preliminary stage of the argument. The advantage of approaching $1$ within a specific block rather than proceeding one dyadic interval at a time
+is that we may reserve judgment on which divisors from previous dyadic intervals should be used and simply throw everything within the block into the circle method.
+We now prove a general theorem which will give what we need to finish the proof of Theorem~\ref{main}. To begin with we define the following condition:
+
+\begin{hypothesis}[$\D\subset \N$, $y\in\N$, $0<\beta\le 1$] 
+\label{H}
+For every integer $h\in [y/2,y^{\lceil 10/\beta\rceil-2}]$, 
+$$\sum_{d\in \D} h_d^2/d^2 > y^{1/4},$$
+where $h_d$ is the distance between $h$ and $d\Z$,
+\end{hypothesis}
+
+This is the condition needed for the medium arcs in the following circle method argument.
+
+\begin{theorem}
+\label{circle}
+Let $\ell/k\in (0,1]$, $\epsilon>0$ and $\beta>0$ be constants, and $\L$ be an integer sufficiently large in terms of $\epsilon$ and $\beta$.
+Let $y_1,\ldots,y_s$ be a sequence of positive integers greater than $\L$
+such that for every $i<s$, $y_i\le y_{i+1}/2$
+and
+$$\bigl[y_i^{\lceil 4/\beta\rceil-5/4},e^{y_i/\log^2 y_i}\bigr]\cap \bigl[y_{i+1}^{\lceil 4/\beta\rceil-5/4},e^{y_{i+1}/\log^2 y_{i+1}}\bigr] \neq \emptyset.$$
+Let $\mathcal{Q}_i$ be a set of integers between $y_i$ and $2y_i$ such that the elements of $\mathcal{Q} := \bigcup_i \mathcal{Q}_i$ are pairwise
+coprime. Let $\B$ be a set including $1$ of integers dividing $(y_1^2)!$ which are coprime to every element of $\Q$.
+Let $E\subset \B$ be a subset which contains at the very least 
+all elements of $\B$ less than $y_1^2$.
+Let
+$$\D = \Bigl(\B\cdot \mathrm{Div}(\prod_{q\in \Q} q)\Bigr)\setminus E.$$
+Let $m$ be the least common multiple of $\D$. Assume that $k\mid m$.
+Let $\alpha = w(\D)(\ell/k)^{-1}$.  If 
+$$1+\frac\epsilon{100} \le \alpha \le \log^{1+\epsilon} y_1,$$
+$$\frac{y_i^\beta}{\log^2 y_i} \ll |\mathcal{Q}_i|\le y_i^\beta$$ 
+for all $i$,
+and Hypothesis~\ref{H} holds for $y=y_1$, then there exist at least two subsets $\D'$ of $\D$ such that $w(\D') \equiv \ell/k\pmod 1$.
+\end{theorem}
+
+\begin{proof}
+
+Let $F(\D)$ be the number of solutions to 
+\begin{equation}\label{eq:cong}
+\sum_{d \in \D'} \frac{1}{d} \equiv \frac{\ell}{k} \pmod{1},
+\end{equation}
+where $\D' \subset \D$, and let $F_\alpha(\D)$ be the weighted number of solutions
+giving $\D'$ satisfying \eqref{eq:cong} weight $(\alpha-1)^{|\D|-|\D'|}$.
+
+
+Setting $e(x) =e^{2\pi i x}$, by orthogonality of characters on $\Z/m\Z$,
+\begin{align*}
+F_\alpha(\D) &= \sum_{\D'\subset \D}\mathbbm{1}_{w(\D')\equiv \ell/k \ \text{mod } 1} (\alpha-1)^{|\D|-|\D'|}\\
+&=\sum_{\D'\subset \D}   \frac 1m \sum_{-m/2 < h \leq m/2} e(h(w(\D')-\ell/k))(\alpha-1)^{|\D|-|\D'|}\\
+&= \frac{1}m \sum_{-m/2 < h \leq m/2} e(-h\ell/k) \prod_{d \in \D} \Bigl(\alpha - 1 + e(h/d)\Bigr).
+\end{align*}
+Moreover, 
+$$F(\D) \ge \frac{F_\alpha(\D)}{\max(1,\alpha - 1)^{|\D|}}.$$
+We write
+$$F_\alpha(\D) = \frac{\alpha^{|\D|}}m \sum_{-m/2 < h \leq m/2} e\bigl(h(\w(\D)/\alpha - \ell/k)\bigr) f(h)
+=  \frac{\alpha^{|\D|}}m \sum_{-m/2 < h \leq m/2} f(h)$$
+where 
+$$f(h) = \prod_{d \in \D} \left(\frac{(\alpha - 1)e(-h/d\alpha) + e\bigl(\frac{(\alpha-1)h}{d\alpha}\bigr)}{\alpha}\right).$$
+It is clear that $h = 0$ contributes $\alpha^{|\D|}/m$ to $F_\alpha(\D)$. We now need to show the other components of the sum do not have much of an effect.
+
+Let $t = \lceil10/\beta\rceil$.
+Fix $i \le s$.
+Let $h_d \in (-d/2, d/2]$ denote the residue of $h$ mod $d$. 
+Suppose it is not true that $|h_d| \leq y_i^{t-2}$ for almost all $d$ which can be expressed as a product of $t$ elements of $\mathcal{Q}_i$. Then 
+$$|h_d|/d \gg y_i^{-2}$$
+for $\gg y_i^{10} / \log^{2t} y_i$ values of $d\in\D$. Note that when $d/|h_d|$ is greater than some fixed power of $\alpha$,
+$$1 - \Bigl| \frac{(\alpha - 1)e(-h/d\alpha) + e\bigl((\alpha - 1)h/d\alpha\bigr)}{\alpha}\Bigr| \gtrsim_\alpha \frac{h_d^2}{d^2}.$$
+Thus for such $h$, $|f(h)| < \exp(-y_i^{5})$ for large $y_i$. We will use this method of bounding $f(h)$ by bounding $|h_d|/d$ repeatedly.
+
+If $|h_d| \leq y_i^{t-2}$ for almost all considered $d$, there exist $q_1,\ldots,q_{t-1} \in \mathcal{Q}_i$ such that for 
+almost all $q_t \in \mathcal{Q}_i$, setting $d = q_1 \cdots q_t$, $|h_d| \leq y_i^{t-2}$, i.e.\ $h$ is within $y_i^{t-2}$ of a multiple of $q_1\cdots q_t$, which we call $M$. We see that $M$ must be divisible by almost all elements of $\mathcal{Q}_i$, since $q_1\cdots q_{t-1} > y_i^{t-2}$.
+
+Fix $q_t\in \mathcal{Q}\cap (1,2y_i)$. Either $q_t \mid M$ or for almost all $q_1,\ldots,q_{t-1} \in \mathcal{Q}_i$, setting $d = q_1\cdots q_t$, $|h_d|/d \gg 1/q_t$, implying that 
+$$|f(h)| < \exp(-y_i^{5}).$$
+Thus either $h$ is within $y_i^{t-2}$ of a multiple of 
+$$R_i := \prod_{\substack{q \in \mathcal{Q} \\ q \leq 2y_i}} q,$$
+or its contribution is exponentially small.
+In particular,
+$$\sum_{|h| \in [y_{i}^{t-2}, R_i/2]} |f(h)| < \exp(-y_i^{5}/2)$$
+because 
+$$R_i\le (y_1^2)!\prod_{i'\le i}(2y_{i'})^{y_{i'}^\beta} = (2y_i)^{O(y_i^2)}.$$
+Since these intervals of summation overlap as we vary $i$,
+$$\sum_{y_{1}^{t-2} \leq |h| \leq m/2} |f(h)| < 2\exp(-y_{1}^{5}/2).$$
+
+Now consider the case that $0<|h| \le y_{1}^{1-5\beta/12}$. For any $d$,
+$$\Bigl|\Imag \frac{(\alpha - 1)e(-h/d\alpha) + e((\alpha - 1)h/d\alpha)}{\alpha}\Bigr| \lesssim_\alpha \frac{h^3}{d^3},$$
+Let
+$$\zeta_{\Q}(\sigma) = \prod_{q\in \Q}(1+q^{-\sigma}) = \frac{\sum_{d\in \D} d^{-\sigma} + \sum_{d\in E} d^{-\sigma}}{\sum_{b\in \B} b^{-\sigma}}.$$
+Then
+$$\log \zeta_{\Q}(3) \le  \sum_{q\in\Q} q^{-3} = \sum_i \sum_{q\in \Q_i} q^{-3} \le \sum_i  y_i^{\beta-3} \le 2y_1^{\beta-3}$$ 
+so
+$$\zeta_{\Q}(3) - 1 \ll y_1^{\beta-3}.$$
+Consequently,
+\begin{align*}
+|\arg f(h)| \lesssim_\alpha h^3\sum_{d\in \D}d^{-3} 
+&\le h^3 \Bigl(\sum_{b\in \B} b^{-3} e^{2y_1^{\beta-3}} - \sum_{d\in E} d^{-3}\Bigr)
+\ll h^3 \Bigl(\sum_{b\in\B\cap [y_1^2,\infty)}b^{-3}+\sum_{b\in \B} b^{-3} y_1^{\beta-3}\Bigr)\\
+& \ll h^3y_1^{\beta-3}\sum_{b\in \B}b^{-3} + h^3 y_1^{-4} \ll y_1^{-\beta/4},
+\end{align*}
+implying that $\operatorname{Re} f(h) > 0$.
+
+Suppose $y_1^{1-5\beta/12}\le |h| \le y_1/2$. Then for all  $q\in \Q_1$, $|h_q|/q \gg y_1^{-5\beta/12}$. Therefore, the total contribution from this range is at most 
+$\exp(-y_1^{\beta/12})$.  The remaining range of $h$-values is covered by Hypothesis~\ref{H}.
+
+Putting it all together,
+$$F(\D) \geq \frac{\alpha^{|\D|}}{m(\max(1,\alpha - 1))^{|\D|}}(1 - o(1)) > 1,$$
+using the fact that $|\D| > 2^{y_s/\log^3 y_s}$ and
+$$\frac\alpha{\max(1,\alpha - 1)} > 1+\frac 1{\log^{1+\epsilon} y_1}.$$
+\end{proof}
+
+We claim Hypothesis~\ref{H} holds for $\D = B \cdot \Div(M_{j_0,  \le i_0})$, $y=x_{a_{j_0}}$, and $\beta = 1$.
+Indeed, if $h$ is fixed, $h + C$ can have $O(1)$ factors in $P_{a_{j_0}}$ when $|C|\le x_{a_{j_0}}^{2/3}$.
+Consequently, almost all primes in $P_{a_{j_0}}$ will not have a multiple within $x_{a_{j_0}}^{2/3}$ of $h$, from which the hypothesis follows.
+
+We can therefore apply Theorem~\ref{circle} to $\B = B$, $\Q_i = P_{i+a_{j_0}-1}$ for $i=1,\ldots,i_0-a_{j_0}+1$,
+$$\D = B \cdot \Div(M_{j_0,  \le i_0}),$$
+$\beta=1$, $\epsilon = \varepsilon$, $\L=L$, and $\ell/k = 1-\w(D_0)$.
+Let $D'$ be a non-empty subset of $D$ with 
+\begin{equation}
+\label{cong}
+\w(D')\equiv  1 - \w(D_0)\pmod 1.
+\end{equation}
+By \eqref{controlled R}, 
+$$\w(D') \le w(D) < 2-w(A)\le 2-w(D_0),$$
+so in fact the two sides of \eqref{cong} are equal.
+Thus
+$$n = \sum_{\substack{d\in D'\cup D_0\\ d>1}} \frac{n}{d}$$
+as elements of $D'$ must have a prime factor $\ge y_{a_{j_0}}$, distinguishing them from elements of $D_0$.
+This concludes the proof of Theorem~\ref{main}.
+
+\begin{corollary}
+There exists an absolute constant $C$ such that if $n$ is any positive integer with $\sigma(n)\ge Cn$, then $n$ is a sum of distinct proper divisors.
+\end{corollary}
+
+\begin{proof}
+Fix $\varepsilon = 1/10$, so \eqref{weird} holds. Let $L$ be the corresponding value guaranteed by Theorem~\ref{main}. If $n$ is not pseudoperfect, then no factor of $n$ is pseudoperfect. Let $m$ be the $L$-rough part of $n$. Then
+$$\frac{\sigma(n)}n \le \frac{\sigma(m)}m \prod_{p< L} \frac p{p-1} \ll 1$$
+if $m$ is not pseudoperfect.
+\end{proof}
+
+We acknowledge the assistance of Claude Opus 4.5 and ChatGPT 5.2 Pro for proofreading.
+
+\begin{thebibliography}{9}
+\bibitem{BE74}Benkoski, S. J. and Erd\H{o}s, P., On weird and pseudoperfect numbers. \textit{Math.\ Comp.} \textbf{28} (1974), 617--623.
+
+\bibitem{B23}Bloom, T.~F.,
+On a density conjecture about unit fractions. With an appendix by Bloom and Bhavik Mehta. 
+\textit{J.\ Eur.\ Math.\ Soc.} (JEMS) \textbf{27} (2025), no.\ 11, 4563--4589.
+
+\bibitem{B825}Bloom, T.~F., Erd\H{o}s Problem \#825, \texttt{https://www.erdosproblems.com/825}, accessed 2026-01-29.
+
+\bibitem{C25}Conlon, D., Fox, J., He, X., Mubayi, D., Pham, H.~T., Suk, A., Verstra\"ete, J.,
+ A question of Erd\H{o}s and Graham on Egyptian fractions, \emph{Discrete Analysis}, 2025:28.
+ 
+\bibitem{C03}Croot, E. S., III, On a coloring conjecture about unit fractions. 
+\textit{Ann.\ of Math.} (2) \textbf{157} (2003), no.\ 2, 545--556.
+
+\bibitem{F93}Friedman, C.~N.
+Sums of divisors and Egyptian fractions.
+\textit{J.\ Number Theory} \textbf{44} (1993), no.\ 3, 328--339.
+
+\bibitem{S65}Sierpi\'nski, W. Sur les nombres pseudoparfaits. \textit{Mat.\ Vesnik} \textbf{2} (17) (1965), 212--213. 
+
+\end{thebibliography}
+\end{document}
